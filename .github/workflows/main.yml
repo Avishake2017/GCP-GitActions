@@ -12,7 +12,8 @@ jobs:
       - id: 'auth'
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ secrets.GKE_SA_KEY }}'
+          workload_identity_provider: 'projects/806804060677/locations/global/workloadIdentityPools/my-pool/providers/my-provider'
+          service_account: 'mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com'
 
       - name: Checkout code
         uses: actions/checkout@v2
