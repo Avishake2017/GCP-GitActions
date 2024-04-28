@@ -21,3 +21,7 @@ gcloud iam workload-identity-pools providers list --workload-identity-pool="mond
 #Get the name of the workflow identity pool
 gcloud iam workload-identity-pools list --location global --format "get(name)"
 
+gcloud projects add-iam-policy-binding plated-monolith-421705\
+    --member=serviceAccount:mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com \
+    --role=roles/container.clusterViewer
+
