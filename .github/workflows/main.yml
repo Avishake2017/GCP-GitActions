@@ -14,7 +14,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           create_credentials_file: true
-          workload_identity_provider: '${{ vars.WORKLOAD_IDENTITY_PROVIDER }}'
+          workload_identity_provider: 'Mondelez MLOPS workflow identity'
           service_account: '${{ secrets.GKE_SA_KEY }}'
 
       - name: Checkout code
@@ -24,7 +24,7 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.5.1
         with:
           service_account_key: ${{ secrets.GKE_SA_KEY }}
-          project_id: ${{ secrets.GKE_PROJECT}}
+          project_id: 'plated-monolith-421705'
           export_default_credentials: true
 
       - name: Configure Docker
