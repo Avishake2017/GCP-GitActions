@@ -7,7 +7,7 @@ on:
 env:
   PROJECT_ID: ${{ secrets.GKE_PROJECT }}
   GAR_LOCATION: asia-south2 # TODO: update region of the Artifact Registry
-  GKE_CLUSTER: cluster-1    # TODO: update to cluster name
+  GKE_CLUSTER: mondelez-kube-cluster    # TODO: update to cluster name
   GKE_ZONE: asia-south2   # TODO: update to cluster zone
   DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
   REPOSITORY: demo # TODO: update to Artifact Registry docker repository
@@ -46,11 +46,11 @@ jobs:
       # run: |-
         #  echo ${{steps.auth.outputs.access_token}} | docker login -u oauth2accesstoken --password-stdin https://$GAR_LOCATION-docker.pkg.dev
     # Get the GKE credentials so we can deploy to the cluster
-    - name: Set up GKE credentials
-      uses: google-github-actions/get-gke-credentials@v0
+    - id: 'get-credentials'
+      uses: 'google-github-actions/get-gke-credentials@v2'
       with:
-        cluster_name: ${{ env.GKE_CLUSTER }}
-        location: ${{ env.GKE_ZONE }}
+        cluster_name: 'mondelez-kube-cluster'
+        location: 'asia-south2'
 
     # Build the Docker image
     - name: Build
