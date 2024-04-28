@@ -20,7 +20,7 @@ jobs:
           create_credentials_file: false
           workload_identity_provider: 'Mondelez MLOPS workflow identity'
           service_account: 'mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com'
-          audience: //iam.googleapis.com/projects/plated-monolith-421705/locations/global/workflows/Deploy Flask Docker Image to GKE/roles/Owner
+          audience: //iam.googleapis.com/projects/806804060677/locations/global/workloadIdentityPools/mondelez-mlops-workflow-identity/providers/mondelez-mlops-workflow-identity
 
       - name: Checkout code
         uses: actions/checkout@v2
