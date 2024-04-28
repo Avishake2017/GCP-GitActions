@@ -1,0 +1,23 @@
+gcloud iam workload-identity-pools create mondelez-mlops-workflow-identity \
+--location="global" \
+--display-name="Mondelez MLOPS workflow identity" \
+--description="Mondelez MLOPS workflow identity" --disabled
+
+
+gcloud iam workload-identity-pools providers create-oidc mondelez-mlops-workflow-identity\
+    --location="global" \
+    --workload-identity-pool="mondelez-mlops-workflow-identity" \
+    --display-name="GitHub workload pool provider" \
+    --description="GitHub workload pool provider" \
+    --issuer-uri="https://token.actions.githubusercontent.com/" \
+    --attribute-mapping="google.subject=assertion.sub" \
+    --attribute-condition="attribute.owner==assertion.repository_owner" \
+    --project plated-monolith-421705
+
+#List the workload id pool
+gcloud iam workload-identity-pools providers list --workload-identity-pool="mondelez-mlops-workflow-identity" --location="global" --show-deleted
+
+
+#Get the name of the workflow identity pool
+gcloud iam workload-identity-pools list --location global --format "get(name)"
+
