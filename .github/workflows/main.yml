@@ -8,14 +8,18 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     steps:
       - id: auth
         name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
+          project_id: 'plated-monolith-421705'
           create_credentials_file: true
           workload_identity_provider: 'Mondelez MLOPS workflow identity'
-          service_account: '${{ secrets.GKE_SA_KEY }}'
+          service_account: 'mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com'
 
       - name: Checkout code
         uses: actions/checkout@v2
@@ -23,7 +27,7 @@ jobs:
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.5.1
         with:
-          service_account_key: ${{ secrets.GKE_SA_KEY }}
+          service_account_key: '7ff3cdb824294fbc5b75fa626356b8a72c771a1b'
           project_id: 'plated-monolith-421705'
           export_default_credentials: true
 
