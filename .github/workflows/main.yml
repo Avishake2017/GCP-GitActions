@@ -1,46 +1,47 @@
-name: Deploy Flask Docker Image to GKE
-
+---
+name: Build and Push Python Image to Google Cloud Platform
 on:
   push:
-    branches:
-      - main
-
+    branches: [ main ]
 jobs:
-  deploy:
+  build-push-gcr:
+    name: Build and Push to GCP
     runs-on: ubuntu-latest
-    permissions:
-      contents: 'read'
-      id-token: 'write'
+    env:
+      IMAGE_NAME: flask-app
+      PROJECT_ID: plated-monolith-421705
     steps:
-      - id: auth
-        name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          project_id: 'plated-monolith-421705'
-          create_credentials_file: false
-          workload_identity_provider: 'Mondelez MLOPS workflow identity'
-          service_account: 'mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com'
-          audience: //iam.googleapis.com/projects/806804060677/locations/global/workloadIdentityPools/mondelez-mlops-workflow-identity/providers/mondelez-mlops-workflow-identity
+    - name: Checkout
+      uses: actions/checkout@v2
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - uses: google-github-actions/setup-gcloud@master
+      with:
+        service_account_key: ${{ secrets.GKE_SA_KEY }}
+        project_id: ${{ env.GKE_PROJECT }}
+        export_default_credentials: true
 
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v0.5.1
-        with:
-          service_account_key: '7ff3cdb824294fbc5b75fa626356b8a72c771a1b'
-          project_id: 'plated-monolith-421705'
-          export_default_credentials: true
+    - name: Build Docker Image
+      run: docker build -t $IMAGE_NAME:latest .
 
-      - name: Configure Docker
-        run: gcloud auth configure-docker
+    - name: Configure Docker Client
+      run: |-
+        gcloud auth configure-docker --quiet
+        gcloud auth configure-docker us-west2-docker.pkg.dev --quiet
 
-      - name: Build Docker image
-        run: |
-          docker build -t gcr.io/${{ secrets.GKE_PROJECT}}/${{ secrets.FLASK_IMAGE_NAME}}:latest .
-          docker push gcr.io/${{ secrets.GKE_PROJECT}}/${{ secrets.FLASK_IMAGE_NAME}}:latest
+    - name: Push Docker Image to Container Registry (GCR)
+      env:
+        GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+      run: |-
+        docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
+        docker tag $IMAGE_NAME:latest gcr.io/$PROJECT_ID/$IMAGE_NAME:$GIT_TAG
+        docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:latest
+        docker push gcr.io/$PROJECT_ID/$IMAGE_NAME:$GIT_TAG
 
-      - name: Deploy to GKE
-        run: |
-          gcloud container clusters get-credentials <CLUSTER_NAME> --zone <CLUSTER_ZONE>
-          kubectl set image deployment/<DEPLOYMENT_NAME> <CONTAINER_NAME>=gcr.io/<YOUR_PROJECT_ID>/<IMAGE_NAME>:latest
+    - name: Push Docker Image to Artifact Registry
+      env:
+        GIT_TAG: ${{ steps.increment-git-tag.outputs.git-tag }}
+      run: |-
+        docker tag $IMAGE_NAME:latest us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+        docker tag $IMAGE_NAME:latest us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
+        docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:latest
+        docker push us-west2-docker.pkg.dev/$PROJECT_ID/images/$IMAGE_NAME:$GIT_TAG
