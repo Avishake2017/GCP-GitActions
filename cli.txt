@@ -25,3 +25,7 @@ gcloud projects add-iam-policy-binding plated-monolith-421705\
     --member=serviceAccount:mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com \
     --role=roles/container.clusterViewer
 
+gcloud projects add-iam-policy-binding plated-monolith-421705 \
+    --member=serviceAccount:mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com \
+    --role=roles/artifactregistry.writer
+
