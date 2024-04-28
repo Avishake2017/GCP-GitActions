@@ -6,7 +6,7 @@ COPY requirements.txt /gcp-actions/
 
 RUN pip install -r requirements.txt
 
-COPY /GCP-GitActions /gcp-actions/
+COPY . /gcp-actions/
 
 EXPOSE 8080
 
