@@ -17,7 +17,7 @@ jobs:
         uses: google-github-actions/auth@v2
         with:
           project_id: 'plated-monolith-421705'
-          create_credentials_file: true
+          create_credentials_file: false
           workload_identity_provider: 'Mondelez MLOPS workflow identity'
           service_account: 'mondelez-mlops-spn@plated-monolith-421705.iam.gserviceaccount.com'
 
