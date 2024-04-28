@@ -10,7 +10,7 @@ env:
   GKE_CLUSTER: mondelez-kube-cluster    # TODO: update to cluster name
   GKE_ZONE: asia-south2   # TODO: update to cluster zone
   DEPLOYMENT_NAME: gke-test # TODO: update to deployment name
-  REPOSITORY: demo # TODO: update to Artifact Registry docker repository
+  REPOSITORY: mondelez-artifact-registry # TODO: update to Artifact Registry docker repository
   IMAGE: static-site
 
 jobs:
